@@ -20,6 +20,17 @@ public class Ticket {
 
     private BigDecimal price; // Using BigDecimal for precise monetary value
 
+    private boolean canceled = false;  // Default value is false
+
+    // existing getters and setters
+
+    public void setCanceled(boolean canceled) {
+        this.canceled = canceled;
+    }
+
+    public boolean isCanceled() {
+        return canceled;
+    }
     // Default Constructor
     public Ticket() {
     }

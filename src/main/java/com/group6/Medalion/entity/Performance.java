@@ -18,7 +18,7 @@ public class Performance {
     @JoinColumn(name = "show_id", nullable = false)
     private Show show;
 
-    private Set<Seat> seats;
+    // private Set<Seat> seats;
     // Default Constructor
     public Performance() {
     }

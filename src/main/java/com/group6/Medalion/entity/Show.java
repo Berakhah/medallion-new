@@ -15,7 +15,6 @@ public class Show {
     private String genre;
     private Double ratings;
     private String imageUrl;
-    private Set<SocialMediaInteraction> socialMediaInteractions;
     @OneToMany(mappedBy = "show", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Performance> performances;
 

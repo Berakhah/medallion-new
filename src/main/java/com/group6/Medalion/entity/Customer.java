@@ -26,7 +26,7 @@ public class Customer {
     private String password; // Store hashed value
     private String phoneNumber;
     private String address;
-    private LoyaltyProgram loyaltyProgram;
+
     // Default Constructor
     public Customer() {
     }
@@ -44,6 +44,14 @@ public class Customer {
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Feedback> feedbacks;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "membership_id")
+    private Membership membership;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "loyalty_program_id", referencedColumnName = "id")
+    private LoyaltyProgram loyaltyProgram;
     // Getters and Setters
     public Long getId() {
         return id;
@@ -98,5 +106,12 @@ public class Customer {
 
     public void setFeedbacks(Set<Feedback> feedbacks) {
         this.feedbacks = feedbacks;
+    }
+    public LoyaltyProgram getLoyaltyProgram() {
+        return loyaltyProgram;
+    }
+
+    public void setLoyaltyProgram(LoyaltyProgram loyaltyProgram) {
+        this.loyaltyProgram = loyaltyProgram;
     }
 }

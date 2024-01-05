@@ -17,10 +17,12 @@ public class Reservation {
 
     @Column(name = "reservation_time", nullable = false)
     private LocalDateTime reservationTime;
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Seat> reservedSeats;
 
     private String seats; // Format: "A1,A2,B1,B2"
     private String status; // Example: "CONFIRMED", "CANCELLED"
-    private Set<Seat> reservedSeats;
+    // private Set<Seat> reservedSeats;
 
     // Default Constructor
     public Reservation() {

@@ -1,6 +1,7 @@
 package com.group6.Medalion.service;
 
 import com.group6.Medalion.entity.Customer;
+import com.group6.Medalion.entity.LoyaltyProgram;
 import com.group6.Medalion.exception.CustomerNotFoundException;
 import com.group6.Medalion.exception.EmailAlreadyExistsException;
 import com.group6.Medalion.repository.CustomerRepository;
@@ -19,6 +20,19 @@ public class CustomerService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private LoyaltyProgramService loyaltyProgramService;
+
+    public Customer enrollInLoyaltyProgram(Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + customerId));
+        LoyaltyProgram loyaltyProgram = new LoyaltyProgram();
+        // Initialize loyalty program (e.g., set initial points, etc.)
+        // ...
+
+        customer.setLoyaltyProgram(loyaltyProgram);
+        return customerRepository.save(customer);
+    }
     public Customer registerCustomer(Customer customer) {
         if (customerRepository.existsByEmail(customer.getEmail())) {
             throw new EmailAlreadyExistsException("Email already in use");
@@ -53,4 +67,6 @@ public class CustomerService {
         Customer customer = getCustomerById(id);
         customerRepository.delete(customer);
     }
+
+
 }

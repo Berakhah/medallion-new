@@ -31,4 +31,15 @@ public class CustomerController {
         Customer customer = customerService.updateCustomer(id, updatedCustomer);
         return ResponseEntity.ok(customer);
     }
+
+    // Endpoint to enroll a customer in the loyalty program
+    @PostMapping("/{customerId}/enroll-loyalty")
+    public ResponseEntity<?> enrollInLoyaltyProgram(@PathVariable Long customerId) {
+        try {
+            Customer customer = customerService.enrollInLoyaltyProgram(customerId);
+            return ResponseEntity.ok(customer);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

@@ -18,15 +18,28 @@ public class Discount {
     @Column(name = "valid_until")
     private LocalDateTime validUntil;
 
-    // Default Constructor
-    public Discount() {
+    private String description; // New field
+
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt; // New field
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
     }
 
-    // Parameterized Constructor
-    public Discount(String code, Double percentage, LocalDateTime validUntil) {
-        this.code = code;
-        this.percentage = percentage;
-        this.validUntil = validUntil;
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    public Discount() {
     }
 
     // Getters and Setters
@@ -60,5 +73,17 @@ public class Discount {
 
     public void setValidUntil(LocalDateTime validUntil) {
         this.validUntil = validUntil;
+    }
+
+    @Override
+    public String toString() {
+        return "Discount{" +
+                "id=" + id +
+                ", code='" + code + '\'' +
+                ", percentage=" + percentage +
+                ", validUntil=" + validUntil +
+                ", description='" + description + '\'' +
+                ", createdAt=" + createdAt +
+                '}';
     }
 }

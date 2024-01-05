@@ -16,8 +16,10 @@ public class SalesController {
     private SalesService salesService;
 
     @PostMapping
-    public ResponseEntity<Sales> createSale(@RequestBody Sales sale) {
-        Sales newSale = salesService.recordSale(sale);
+    public ResponseEntity<Sales> createSale(@RequestBody Sales sale,
+                                            @RequestParam(required = false) String discountCode) {
+        // Record the sale with an optional discount code
+        Sales newSale = salesService.recordSale(sale, discountCode);
         return new ResponseEntity<>(newSale, HttpStatus.CREATED);
     }
 
@@ -30,13 +32,19 @@ public class SalesController {
     @GetMapping("/{id}")
     public ResponseEntity<Sales> getSale(@PathVariable Long id) {
         Sales sale = salesService.getSaleById(id);
-        return new ResponseEntity<>(sale, HttpStatus.OK);
+        if (sale == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(sale);
     }
 
     @PutMapping("/{id}/payment")
     public ResponseEntity<Sales> processPayment(@PathVariable Long id) {
         Sales sale = salesService.getSaleById(id);
+        if (sale == null) {
+            return ResponseEntity.notFound().build();
+        }
         Sales updatedSale = salesService.processPayment(sale);
-        return new ResponseEntity<>(updatedSale, HttpStatus.OK);
+        return ResponseEntity.ok(updatedSale);
     }
 }

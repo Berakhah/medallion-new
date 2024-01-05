@@ -12,7 +12,7 @@ public class TicketService {
     private TicketRepository ticketRepository;
 
     public Ticket issueTicket(Ticket ticket) {
-        // Additional business logic and validations
+        // Additional business logic and validations before issuing a ticket
         return ticketRepository.save(ticket);
     }
 
@@ -21,5 +21,19 @@ public class TicketService {
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id " + id));
     }
 
-    // Additional methods as necessary, for example, cancelTicket, updateTicket, etc.
+    public void cancelTicket(Long id) {
+        Ticket ticket = getTicketById(id);
+        ticket.setCanceled(true);  // Mark the ticket as canceled
+        ticketRepository.save(ticket);
+    }
+
+    public Ticket updateTicket(Long id, Ticket updatedTicket) {
+        Ticket ticket = getTicketById(id);
+        // Update ticket details as per updatedTicket
+        ticket.setCustomerEmail(updatedTicket.getCustomerEmail());
+        ticket.setReservation(updatedTicket.getReservation());
+        ticket.setSeatNumber(updatedTicket.getSeatNumber());
+        ticket.setPrice(updatedTicket.getPrice());
+        return ticketRepository.save(ticket);
+    }
 }

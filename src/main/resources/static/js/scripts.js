@@ -1,374 +1,239 @@
-function createShow(showData) {
-    return fetch('/api/shows', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(showData)
-    })
-        .then(response => response.json());
-}
+// API endpoints for server communication
+const API_ENDPOINTS = {
+    customers: '/api/customers',
+    shows: '/api/shows',
+    reservations: '/reservations',
+    tickets: '/api/tickets',
+    feedback: '/feedback',
+    sales: '/sales',
+    discounts: '/discounts',
+    performances: '/api/performances',
+    loyaltyPrograms: '/api/loyalty',
+    memberships: '/api/memberships',
+    events: '/api/events',
+    seats: '/api/seats'
+};
 
-
-function getAllShows() {
-    fetch('/api/shows')
-        .then(response => response.json())
-        .then(shows => {
-            const showsContainer = document.getElementById('showsContainer');
-            shows.forEach(show => {
-                const showDiv = document.createElement('div');
-                showDiv.className = 'show';
-                showDiv.innerHTML = `
-                    <h3>${show.title}</h3>
-                    <p>${show.description}</p>
-                    <button onclick="openBookingForm('${show.id}')">Book Tickets</button>
-                `;
-                showsContainer.appendChild(showDiv);
-            });
-        })
-        .catch(error => console.error('Error fetching shows:', error));
-}
-
-// Call this function when the page loads
-document.addEventListener('DOMContentLoaded', getAllShows);
-
-function registerCustomerHandler() {
-    // Collecting form data
-    const name = document.querySelector('input[type="text"]').value;
-    const email = document.querySelector('input[type="email"]').value;
-    const passwords = document.querySelectorAll('input[type="password"]');
-
-    // Validation before sending data
-    if (!validateForm(name, email, passwords)) {
-        return; // Stop the function if validation fails
-    }
-
-    // Preparing data for registration
-    const customerData = { name, email, password: passwords[0].value };
-    registerCustomer(customerData);
-}
-
-function validateForm(name, email, passwords) {
-    // Check if name and email are not empty
-    if (!name || !email) {
-        alert("Name and email are required!");
-        return false;
-    }
-
-    // Check if passwords match
-    if (passwords[0].value !== passwords[1].value) {
-        alert("Passwords do not match!");
-        return false;
-    }
-
-    // Check if Terms of Service is checked
-    const tosCheckbox = document.getElementById('agree-term');
-    if (!tosCheckbox.checked) {
-        alert("You must agree to the Terms of Service!");
-        return false;
-    }
-
-    return true; // All validations passed
-}
-
-function updateShow(showId, showData) {
-    return fetch(`/api/shows/${showId}`, {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(showData)
-    })
-        .then(response => response.json());
-}
-
-function deleteShow(showId) {
-    return fetch(`/api/shows/${showId}`, {
-        method: 'DELETE'
-    })
-        .then(response => response.status);
-}
-
-
-function createReservation(reservationData) {
-    return fetch('/api/reservations', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(reservationData)
-    })
-        .then(response => response.json());
-}
-
-
-function getReservation(reservationId) {
-    return fetch(`/api/reservations/${reservationId}`)
-        .then(response => response.json());
-}
-
-
-function updateReservation(reservationId, reservationData) {
-    return fetch(`/api/reservations/${reservationId}`, {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(reservationData)
-    })
-        .then(response => response.json());
-}
-
-
-function deleteReservation(reservationId) {
-    return fetch(`/api/reservations/${reservationId}`, {
-        method: 'DELETE'
-    })
-        .then(response => response.status);
-}
-
-
-function issueTicket(ticketData) {
-    return fetch('/api/tickets', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(ticketData)
-    })
-        .then(response => response.json());
-}
-
-function handleBooking(showId) {
-    // Step 1: Gather reservation data
-    // Assuming CustomerID and other necessary data are available
-    const reservationData = {
-        showId: showId,
-        customerId: CustomerID, // Ensure this is defined or retrieved from the context
-        // Add other necessary data like seat number, date, etc.
-    };
-
-    // Step 2: Create a reservation
-    createReservation(reservationData)
-        .then(reservationResponse => {
-            // Check if reservation was successful
-            if (reservationResponse.success) {
-                // Step 3: Gather ticket data
-                const ticketData = {
-                    reservationId: reservationResponse.id,
-                    // Other ticket related data
-                };
-
-                // Step 4: Issue a ticket
-                return issueTicket(ticketData);
-            } else {
-                // Handle reservation error
-                console.error('Reservation failed:', reservationResponse.message);
-                alert('Reservation failed: ' + reservationResponse.message); // User-friendly error message
-                throw new Error('Reservation failed');
-            }
-        })
-        .then(ticketResponse => {
-            // Handle successful ticket issue
-            console.log('Ticket issued successfully:', ticketResponse);
-            alert('Ticket issued successfully!'); // Notify user of success
-        })
-        .catch(error => {
-            // Handle errors
-            console.error('Error in booking process:', error);
-            alert('Error in booking process: ' + error.message); // User-friendly error message
-        });
-}
-
-// Example AJAX request function for creating a reservation
-//function createReservation(data) {
-//     return fetch('/api/reservation', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(data)
-//     })
-//         .then(response => response.json());
-// }
-
-// Example AJAX request function for issuing a ticket
-function issueTicket(data) {
-    return fetch('/api/ticket', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    })
-        .then(response => response.json());
-}
-
-
-function getTicketDetails(ticketId) {
-    return fetch(`/api/tickets/${ticketId}`)
-        .then(response => response.json());
-}
-
-
-function submitFeedback(feedbackData) {
-    return fetch('/api/feedback', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(feedbackData)
-    })
-        .then(response => response.json());
-}
-
-
-function getAllFeedback() {
-    return fetch('/api/feedback')
-        .then(response => response.json());
-}
-
-
-function updateFeedback(feedbackId, feedbackData) {
-    return fetch(`/api/feedback/${feedbackId}`, {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(feedbackData)
-    })
-        .then(response => response.json());
-}
-
-
-function createSale(saleData) {
-    return fetch('/api/sales', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(saleData)
-    })
-        .then(response => response.json());
-}
-
-function getSaleDetails(saleId) {
-    return fetch(`/api/sales/${saleId}`)
-        .then(response => response.json());
-}
-
-
-function processSalePayment(saleId, paymentData) {
-    return fetch(`/api/sales/${saleId}/payment`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(paymentData)
-    })
-        .then(response => response.json());
-}
-
-
-function getAllSales() {
-    return fetch('/api/sales')
-        .then(response => response.json());
-}
-
-
-function registerCustomer(customerData) {
-    return fetch('/api/customers', {
-        method: 'POST',
+// Function to send requests to the server
+function sendRequest(endpoint, method, data = null) {
+    const config = {
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(customerData)
-    })
-        .then(response => {
-            // Check if the request was successful
-            if (!response.ok) {
-                // If not successful, throw an error with the status
-                throw new Error('Registration failed with status: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Handle the successful response here
-            alert("Registration successful!");
-            console.log("Registration data:", data);
-            // Optionally, redirect the user or update the UI
-        })
-        .catch(error => {
-            // Handle any errors here
-            alert(error.message);
-            console.error("Error during registration:", error);
-        });
+        body: data ? JSON.stringify(data) : null
+    };
+    return fetch(endpoint, config)
+        .then(response => response.json().then(data => ({ status: response.status, body: data })))
+        .catch(error => console.error('Error:', error));
 }
 
+// Customer-related operations
+// Register a new customer with the system
+function registerCustomer(customerData) {
+    return sendRequest(`${API_ENDPOINTS.customers}/register`, 'POST', customerData);
+}
 
-
+// Retrieve detailed information about a customer
 function getCustomerDetails(customerId) {
-    return fetch(`/api/customers/${customerId}`)
-        .then(response => response.json());
+    return sendRequest(`${API_ENDPOINTS.customers}/${customerId}`, 'GET');
 }
 
-
+// Update the information for an existing customer
 function updateCustomer(customerId, customerData) {
-    return fetch(`/api/customers/${customerId}`, {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(customerData)
-    })
-        .then(response => response.json());
+    return sendRequest(`${API_ENDPOINTS.customers}/${customerId}`, 'PUT', customerData);
 }
 
-
-function createDiscount(discountData) {
-    return fetch('/api/discounts', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(discountData)
-    })
-        .then(response => response.json());
+// Enroll a customer in a loyalty program
+function enrollCustomerInLoyaltyProgram(customerId) {
+    return sendRequest(`${API_ENDPOINTS.customers}/${customerId}/enroll-loyalty`, 'POST');
 }
 
-
-function applyDiscountToSale(saleId, discountCode) {
-    return fetch(`/api/discounts/apply/${saleId}`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ discountCode: discountCode })
-    })
-        .then(response => response.json());
+// Show-related operations
+// Add a new show to the system
+function createShow(showData) {
+    return sendRequest(API_ENDPOINTS.shows, 'POST', showData);
 }
 
-
-function addPerformance(performanceData) {
-    return fetch('/api/performances', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(performanceData)
-    })
-        .then(response => response.json());
+// Retrieve a list of all shows from the system
+function getAllShows() {
+    return sendRequest(API_ENDPOINTS.shows, 'GET');
 }
 
-
-function getPerformanceDetails(performanceId) {
-    return fetch(`/api/performances/${performanceId}`)
-        .then(response => response.json());
-}
-
-function updatePerformance(performanceId, performanceData) {
-    return fetch(`/api/performances/${performanceId}`, {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(performanceData)
-    })
-        .then(response => response.json());
-}
-
-
-function deletePerformance(performanceId) {
-    return fetch(`/api/performances/${performanceId}`, {
-        method: 'DELETE'
-    })
-        .then(response => response.status);
-}
-
-
-function getPerformancesForShow(showId) {
-    return fetch(`/api/performances/show/${showId}`)
-        .then(response => response.json());
-}
-
-
-function getUserDetails(userId) {
-    return fetch(`/api/users/${userId}`)
-        .then(response => response.json());
-}
-
-
+// Get detailed information about a particular show
 function getShowDetails(showId) {
-    return fetch(`/api/shows/${showId}`)
-        .then(response => response.json());
+    return sendRequest(`${API_ENDPOINTS.shows}/${showId}`, 'GET');
+}
+
+// Update the details for an existing show
+function updateShow(showId, showData) {
+    return sendRequest(`${API_ENDPOINTS.shows}/${showId}`, 'PUT', showData);
+}
+
+// Remove a show from the system
+function deleteShow(showId) {
+    return sendRequest(`${API_ENDPOINTS.shows}/${showId}`, 'DELETE');
+}
+
+// Reservation-related operations
+// Create a new reservation for tickets
+function createReservation(reservationData) {
+    return sendRequest(API_ENDPOINTS.reservations, 'POST', reservationData);
+}
+
+// Get detailed information about a specific reservation
+function getReservation(reservationId) {
+    return sendRequest(`${API_ENDPOINTS.reservations}/${reservationId}`, 'GET');
+}
+
+// Update details for an existing reservation
+function updateReservation(reservationId, reservationData) {
+    return sendRequest(`${API_ENDPOINTS.reservations}/${reservationId}`, 'PUT', reservationData);
+}
+
+// Cancel and delete an existing reservation
+function deleteReservation(reservationId) {
+    return sendRequest(`${API_ENDPOINTS.reservations}/${reservationId}`, 'DELETE');
+}
+
+// Ticket-related operations
+// Issue a ticket for a particular reservation
+function issueTicket(ticketData) {
+    return sendRequest(API_ENDPOINTS.tickets, 'POST', ticketData);
+}
+
+// Retrieve details about a specific ticket
+function getTicketDetails(ticketId) {
+    return sendRequest(`${API_ENDPOINTS.tickets}/${ticketId}`, 'GET');
+}
+
+// Cancel a ticket
+function cancelTicket(ticketId) {
+    return sendRequest(`${API_ENDPOINTS.tickets}/${ticketId}/cancel`, 'PUT');
+}
+
+// Update ticket details
+function updateTicket(ticketId, ticketData) {
+    return sendRequest(`${API_ENDPOINTS.tickets}/${ticketId}`, 'PUT', ticketData);
+}
+
+// Feedback-related operations
+// Submit new feedback from a customer
+function submitFeedback(feedbackData) {
+    return sendRequest(API_ENDPOINTS.feedback, 'POST', feedbackData);
+}
+
+// Retrieve all feedback entries from the system
+function getAllFeedback() {
+    return sendRequest(API_ENDPOINTS.feedback, 'GET');
+}
+
+// Update an existing feedback entry
+function updateFeedback(feedbackId, feedbackData) {
+    return sendRequest(`${API_ENDPOINTS.feedback}/${feedbackId}`, 'PUT', feedbackData);
+}
+
+// Sales-related operations
+// Record a new sale in the system
+function createSale(saleData) {
+    return sendRequest(API_ENDPOINTS.sales, 'POST', saleData);
+}
+
+// Retrieve detailed information about a specific sale
+function getSaleDetails(saleId) {
+    return sendRequest(`${API_ENDPOINTS.sales}/${saleId}`, 'GET');
+}
+
+// Process a payment for a specific sale
+function processSalePayment(saleId) {
+    return sendRequest(`${API_ENDPOINTS.sales}/${saleId}/payment`, 'PUT');
+}
+
+// Retrieve a list of all sales records
+function getAllSales() {
+    return sendRequest(API_ENDPOINTS.sales, 'GET');
+}
+
+// Discount-related operations
+// Create a new discount code in the system
+function createDiscount(discountData) {
+    return sendRequest(API_ENDPOINTS.discounts, 'POST', discountData);
+}
+
+// Apply a discount code to an existing sale
+function applyDiscountToSale(saleId, discountCode) {
+    return sendRequest(`${API_ENDPOINTS.discounts}/${discountCode}/apply/${saleId}`, 'POST');
+}
+
+// Performance-related operations
+// Add a new performance to a show
+function addPerformance(performanceData) {
+    return sendRequest(API_ENDPOINTS.performances, 'POST', performanceData);
+}
+
+// Get detailed information about a specific performance
+function getPerformanceDetails(performanceId) {
+    return sendRequest(`${API_ENDPOINTS.performances}/${performanceId}`, 'GET');
+}
+
+// Update the details of an existing performance
+function updatePerformance(performanceId, performanceData) {
+    return sendRequest(`${API_ENDPOINTS.performances}/${performanceId}`, 'PUT', performanceData);
+}
+
+// Remove a performance from the system
+function deletePerformance(performanceId) {
+    return sendRequest(`${API_ENDPOINTS.performances}/${performanceId}`, 'DELETE');
+}
+
+// Retrieve all performances associated with a specific show
+function getPerformancesForShow(showId) {
+    return sendRequest(`${API_ENDPOINTS.performances}/show/${showId}`, 'GET');
+}
+
+// Loyalty Program-related operations
+// Register a customer for a new loyalty program
+function enrollInLoyaltyProgram(customerId) {
+    return sendRequest(`${API_ENDPOINTS.loyaltyPrograms}/enroll/${customerId}`, 'POST');
+}
+
+// Event-related operations
+// Add a new event to the system
+function createEvent(eventData) {
+    return sendRequest(API_ENDPOINTS.events, 'POST', eventData);
+}
+
+// Membership-related operations
+// Create a new membership level in the system
+function createMembership(membershipData) {
+    return sendRequest(API_ENDPOINTS.memberships, 'POST', membershipData);
+}
+
+// Retrieve detailed information about a specific membership
+function getMembershipDetails(membershipId) {
+    return sendRequest(`${API_ENDPOINTS.memberships}/${membershipId}`, 'GET');
+}
+
+// Update the details of an existing membership
+function updateMembership(membershipId, membershipData) {
+    return sendRequest(`${API_ENDPOINTS.memberships}/${membershipId}`, 'PUT', membershipData);
+}
+
+// Seat-related operations
+// Update seat availability for a specific performance
+function updateSeatAvailability(seatId, isAvailable) {
+    return sendRequest(`${API_ENDPOINTS.seats}/${seatId}/availability`, 'PUT', { isAvailable });
+}
+
+// Get detailed information about a specific seat
+function getSeatDetails(seatId) {
+    return sendRequest(`${API_ENDPOINTS.seats}/${seatId}`, 'GET');
+}
+
+// Update the details of a specific seat
+function updateSeat(seatId, seatData) {
+    return sendRequest(`${API_ENDPOINTS.seats}/${seatId}`, 'PUT', seatData);
+}
+
+// Get available seats for a specific performance
+function getAvailableSeats(performanceId) {
+    return sendRequest(`${API_ENDPOINTS.seats}/performance/${performanceId}`, 'GET');
 }

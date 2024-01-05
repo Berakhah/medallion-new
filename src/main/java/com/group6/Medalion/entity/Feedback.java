@@ -6,33 +6,41 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "CustomerFeedback")
 public class Feedback {
+    // Attributes
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Customer who provided the feedback
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
+    // Performance the feedback is about
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "performance_id", nullable = false)
     private Performance performance;
 
+    // Date and time when the feedback was submitted
     @Column(name = "submission_date")
     private LocalDateTime submissionDate;
 
+    // Content of the feedback
     @Column(nullable = false)
     private String content;
 
+    // Status of the feedback (e.g., pending, reviewed)
     private String status;
 
+    // Numerical rating provided in the feedback
     private Integer rating;
+
 
     // Default Constructor
     public Feedback() {
     }
 
-    // Parameterized Constructor
+    // Parameterized constructor
     // Update the constructor parameters to accept Customer and Performance entities
     public Feedback(Customer customer, Performance performance, LocalDateTime submissionDate,
                     String content, String status, Integer rating) {
@@ -43,7 +51,8 @@ public class Feedback {
         this.status = status;
         this.rating = rating;
     }
-    // Getters and Setters
+
+    // Getters and setters for all attributes
     public Long getId() {
         return id;
     }

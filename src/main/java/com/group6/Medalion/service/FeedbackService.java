@@ -14,19 +14,19 @@ public class FeedbackService {
     @Autowired
     private FeedbackRepository feedbackRepository;
 
-    // Method to submit feedback
+    // Submit new feedback with automatic date and pending status
     public Feedback submitFeedback(Feedback feedback) {
         feedback.setSubmissionDate(LocalDateTime.now());
         feedback.setStatus("PENDING");
         return feedbackRepository.save(feedback);
     }
 
-    // Method to get all feedback
+    // Retrieve all feedback entries
     public List<Feedback> getAllFeedback() {
         return feedbackRepository.findAll();
     }
 
-    // Method to update feedback status
+    // Update the status of an existing feedback
     public Feedback updateFeedbackStatus(Long feedbackId, String newStatus) {
         Feedback feedback = feedbackRepository.findById(feedbackId)
                 .orElseThrow(() -> new FeedbackNotFoundException("Feedback not found with id: " + feedbackId));
@@ -35,5 +35,5 @@ public class FeedbackService {
         return feedbackRepository.save(feedback);
     }
 
-    // Any other additional methods...
+    // Additional methods...
 }

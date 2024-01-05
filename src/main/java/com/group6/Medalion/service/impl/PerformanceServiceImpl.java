@@ -18,8 +18,9 @@ public class PerformanceServiceImpl implements PerformanceService {
 
     @Override
     public Performance addPerformance(Performance performance) {
+        // Validation for performance date
         if (performance.getDateTime().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Performance date and time must be in the future");
+            throw new IllegalArgumentException("Performance date and time must be in the future.");
         }
         return performanceRepository.save(performance);
     }
@@ -34,26 +35,25 @@ public class PerformanceServiceImpl implements PerformanceService {
         return performanceRepository.findById(id)
                 .map(performance -> {
                     performance.setDateTime(updatedPerformance.getDateTime());
-                    // Ensure that the Show is not null before setting it
                     if (updatedPerformance.getShow() != null) {
                         performance.setShow(updatedPerformance.getShow());
                     }
                     return performanceRepository.save(performance);
                 })
-                .orElseThrow(() -> new RuntimeException("Performance not found with id " + id));
+                .orElseThrow(() -> new RuntimeException("Performance not found with id: " + id));
     }
 
+    @Override
     public void deletePerformance(Long id) {
         if (!performanceRepository.existsById(id)) {
-            throw new RuntimeException("Performance not found with id " + id);
+            throw new RuntimeException("Performance not found with id: " + id);
         }
         performanceRepository.deleteById(id);
     }
 
     @Override
     public List<Performance> getPerformancesForShow(Long showId) {
-        // Implement logic to retrieve performances for a specific show
-        // This method should be updated to filter performances by the given showId
-        return performanceRepository.findByShow_ShowId(showId); // Assuming such a method exists in the repository
+        return performanceRepository.findByShow_ShowId(showId);
     }
 }
+
